@@ -46,9 +46,9 @@
         title:"",
         url:'/mainPage',
         user:{
-          userName:'NOVIAS',
-          userPwd:'**********',
-          userSex:"未填写"
+          userName:'',
+          userPwd:'',
+          userSex:""
         },
         option:['男','女']
       }

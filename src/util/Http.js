@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 // 设置axios信息
 axios.defaults.baseURL = 'http://bike.zhunilink.com:8889';
-axios.defaults.withCredentials=true;
+axios.defaults.withCredentials=false;
 axios.interceptors.request.use(
   config => {
     return config;
@@ -30,8 +30,8 @@ export default {
       data:qs.stringify(data),
       timeout: 5000,
       headers: {
-        'mobile_session_flag':true,
-        'session_token':Vue.prototype.GOBALUUID,
+        //'mobile_session_flag':true,
+        //'session_token':Vue.prototype.GOBALUUID,
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       }

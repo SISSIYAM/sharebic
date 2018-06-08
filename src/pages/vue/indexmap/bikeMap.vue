@@ -8,12 +8,15 @@
       <div class="detaItemLeft">
         <!--<img src="../../../../static/images/bike_stationIcon.png" style="width: 35px;height: 35px;">-->
         <div class="detaItemText">
-          <div class="detaItemText1">{{ DetaInfo.FullAddress }} {{ DetaInfo.kneeId }}站点</div>
+          <!--<div class="detaItemText1">{{ DetaInfo.FullAddress }} {{ DetaInfo.kneeId }}站点</div>-->
+          <div class="detaItemText1">{{ DetaInfo.FullAddress }}站点</div>
           <div class="detaItemText2">距此{{ DetaInfo.rangeL }}米，大约用时{{ Math.round(DetaInfo.userTime/60) }}分钟</div>
         </div>
         <!-- 加入预约车桩显示状态 -->
         <div class="carport-state">
-          <span>{{DetaInfo.usage}}/{{DetaInfo.total}}</span>
+          <span class="usage">{{DetaInfo.usage}}</span>
+          <span class="slash">/</span>
+          <span class="total">{{DetaInfo.total}}</span>
           <img src="../../../../static/images/carport_state.png">
         </div>
         <div class="detaItemRight" @click="closeDeta">
@@ -23,7 +26,7 @@
       <!-- 加入预约和取消预约-->
       <div class="book-cancel">
         <span class="detaItemText3" @click="bookBikeDock">停车预约</span>
-        <span class="detaItemText" @click="cancelBikeDock">取消预约</span>
+        <span class="detaItemText" @click="pickUpBikeDock">取车预约</span>
       </div>
     </div>
 
@@ -112,9 +115,19 @@
           FullAddress: '',
           rangeL: '',
           userTime: '',
-          kneeId: ''
+          kneeId: '',
+          total:'',
+          usage:''
+        },
+        //停车，取车 预约
+        bookOrPickBikeDock : {
+          stationId:''
         },
 
+        bookBikeDockInfo : {
+          countDownTimer:'',
+          dockNumber:''
+        },
 
         //  历史输入的内容定义
         restaurants: [],
@@ -135,7 +148,7 @@
         if (this.DetaStatus) {
           return true;
         } else {
-          return true;
+          return false;
         }
       },
       //  定位点的描绘
@@ -327,8 +340,11 @@
           //给Marker绑定单击事件
           markers.on('click', function (e) {
             _this.getWalkDetaInfo(marker.longitude, marker.latitude);
-            _this.DetaInfo.FullAddress = marker.area;
+            //_this.DetaInfo.FullAddress = marker.area;
+            _this.DetaInfo.FullAddress = marker.description;
             _this.DetaInfo.kneeId = marker.id;
+            _this.DetaInfo.total = marker.total;
+            _this.DetaInfo.usage = marker.usage;
             _this.DetaStatus = true;
           });
         });
@@ -628,16 +644,29 @@
 
       //停车预约和取消预约
       bookBikeDock: function (){
-        var _this = this;
         if(this.DetaInfo.FullAddress){
-
+          this.bookOrPickBikeDock.stationId = this.DetaInfo.kneeId;
+          this.$http.post('/station/bookStation',{
+            type:0,
+            stationId:this.bookOrPickBikeDock.stationId
+          })
+            .then(function(response){
+              console.log(response.data);
+              var bookDockData = response.data;
+              if(response.data.code===200){
+                //this.bookBikeDockInfo.dockNumber = bookDockData
+              }
+              else{}
+            }).catch(function(error){
+              console.log(error);
+          })
         }
         else{
 
         }
       },
 
-      cancelBikeDock: function (){
+      pickUpBikeDock: function (){
 
       },
 
@@ -753,7 +782,6 @@
   .carport-state {
     span {
       position: absolute;
-      margin-left: 13px;
     }
     img {
       width: 40px;
@@ -767,6 +795,18 @@
     float: left;
     display: inline-flex;
     width: 100%;
+  }
+
+  .usage {
+    margin-left: 3px;
+    color:#5bc8ff;
+  }
+  .slash {
+    margin-left: 20px;
+  }
+  .total {
+    margin-left: 30px;
+    color:#333333;
   }
 
 </style>
