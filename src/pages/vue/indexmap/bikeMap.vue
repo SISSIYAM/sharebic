@@ -4,16 +4,26 @@
     <div id="bike_map-container" style="width: 100%;height: 93%;"></div>
 
     <!-- 详情提示框 -->
-    <div v-show="showDetaInfo" id="detaInfo" style="right: 0px;left: 0px;bottom: 110px;">
+    <div v-show="showDetaInfo" class="dataInfo" style="right: 0px;left: 0px;bottom: 110px;">
       <div class="detaItemLeft">
-        <img src="../../../../static/images/bike_stationIcon.png" style="width: 35px;height: 35px;">
+        <!--<img src="../../../../static/images/bike_stationIcon.png" style="width: 35px;height: 35px;">-->
         <div class="detaItemText">
-          <div class="detaItemText1">{{ DetaInfo.FullAddress }} {{ DetaInfo.kneeId }}号桩</div>
+          <div class="detaItemText1">{{ DetaInfo.FullAddress }} {{ DetaInfo.kneeId }}站点</div>
           <div class="detaItemText2">距此{{ DetaInfo.rangeL }}米，大约用时{{ Math.round(DetaInfo.userTime/60) }}分钟</div>
+        </div>
+        <!-- 加入预约车桩显示状态 -->
+        <div class="carport-state">
+          <span>{{DetaInfo.usage}}/{{DetaInfo.total}}</span>
+          <img src="../../../../static/images/carport_state.png">
         </div>
         <div class="detaItemRight" @click="closeDeta">
           <img src="../../../../static/images/close_status.png" style="width: 26px;height: 26px">
         </div>
+      </div>
+      <!-- 加入预约和取消预约-->
+      <div class="book-cancel">
+        <span class="detaItemText3" @click="bookBikeDock">停车预约</span>
+        <span class="detaItemText" @click="cancelBikeDock">取消预约</span>
       </div>
     </div>
 
@@ -125,7 +135,7 @@
         if (this.DetaStatus) {
           return true;
         } else {
-          return false;
+          return true;
         }
       },
       //  定位点的描绘
@@ -616,6 +626,21 @@
         }
       },
 
+      //停车预约和取消预约
+      bookBikeDock: function (){
+        var _this = this;
+        if(this.DetaInfo.FullAddress){
+
+        }
+        else{
+
+        }
+      },
+
+      cancelBikeDock: function (){
+
+      },
+
       //开始调用原生导航
       startNavigate() {
         this.sendTripToServer();
@@ -651,9 +676,9 @@
   }
 
   /* 详情模块开始 */
-  #detaInfo {
+  .dataInfo {
     width: 90%;
-    height: 48px;
+    height: auto;
     position: absolute;
     background-color: white;
     margin: 0 auto;
@@ -662,22 +687,28 @@
       float: left;
       display: inline-flex;
       width: 100%;
-      img {
-        margin-top: 10px;
-        margin-left: 12px;
-        margin-right: 12px;
-      }
-      .detaItemText {
-        font-family: "Ping SC Regular";
-        margin-top: 8px;
-        flex: 1;
-        .detaItemText1 {
-          font-weight: bolder;
-        }
-        .detaItemText2 {
-          font-size: smaller;
-        }
-      }
+      border-bottom: 1px solid #ccc!important;
+      /*img {*/
+      /*margin-top: 10px;*/
+      /*margin-left: 12px;*/
+      /*margin-right: 12px;*/
+      /*}*/
+    }
+    .detaItemText {
+      font-family: "Ping SC Regular";
+      margin-top: 8px;
+      flex: 1;
+    }
+    .detaItemText1 {
+      font-weight: bolder;
+    }
+    .detaItemText2 {
+      font-size: smaller;
+    }
+    .detaItemText3 {
+      margin-top: 8px;
+      flex: 1;
+      border-right: 1px solid #ccc!important;
     }
     .detaItemRight {
       margin-top: 2px;
@@ -716,6 +747,26 @@
       margin-right: 10px;
     }
 
+  }
+
+  /* 预约车桩*/
+  .carport-state {
+    span {
+      position: absolute;
+      margin-left: 13px;
+    }
+    img {
+      width: 40px;
+      height: 23px;
+      margin-top: 20px;
+      margin-right: 50px;
+    }
+  }
+
+  .book-cancel {
+    float: left;
+    display: inline-flex;
+    width: 100%;
   }
 
 </style>
