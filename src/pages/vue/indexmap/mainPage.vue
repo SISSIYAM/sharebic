@@ -365,7 +365,7 @@
 
       //获取蓝牙搜索到的车桩数据信息
       startBleScan: function () {
-        if(true){
+        if(false){
           this.bleDeviceList = [{"name":"#12345"},
                                 {"name":"#34467"},
                                 {"name":"#34567"},
@@ -375,6 +375,7 @@
           this.bikeDockListBox = true;
         }else{
           this.bleDeviceList = [];
+          this.bikeDockListBox = true;
           ShareBikeApi.showDialog("正在扫描");
           BleManagerUtil.enableBluetooth().then(() => {
             // this.$refs.processDialog.changeVisible(true);

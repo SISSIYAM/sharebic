@@ -23,8 +23,8 @@
           <img src="../../../../static/images/close_status.png" style="width: 26px;height: 26px">
         </div>
       </div>
-      <!-- 加入预约和取消预约-->
-      <div class="book-cancel">
+      <!-- 加入预约-->
+      <div class="booking-options">
         <span class="detaItemText3" @click="bookBikeDock">停车预约</span>
         <span class="detaItemText" @click="pickUpBikeDock">取车预约</span>
       </div>
@@ -48,6 +48,18 @@
       </div>
       <div style="width: 38px" class="GoOutimgRight" @click="searchWay">
         <img src="../../../../static/images/position_search.png" style="width: 38px;height: 38px;">
+      </div>
+    </div>
+
+    <!-- 预约提示-->
+    <div v-show="showBookingDockInfo" class="dataInfo">
+      <div class="detaItemText">
+        <div class="detaItemText1">预约中{{}}</div>
+        <div class="detaItemText2">车位编号#{{}},请在约定时间内前往。</div>
+      </div>
+      <div class="booking-options">
+        <span class="detaItemText3" @click="">取消预约</span>
+        <span class="detaItemText" @click="">到达开锁</span>
       </div>
     </div>
   </div>
@@ -129,6 +141,8 @@
           dockNumber:''
         },
 
+        bookingDockInfo:false,
+
         //  历史输入的内容定义
         restaurants: [],
       }
@@ -170,6 +184,16 @@
         });
         return this.AllStationInfo;
       },
+
+      //预约后显示预约提示信息
+      showBookingDockInfo:function() {
+        if(this.bookingDockInfo){
+          return true;
+        }
+        else{
+          return true;
+        }
+      }
 
     },
     created() {
@@ -644,6 +668,7 @@
 
       //停车预约和取消预约
       bookBikeDock: function (){
+        var _this = this;
         if(this.DetaInfo.FullAddress){
           this.bookOrPickBikeDock.stationId = this.DetaInfo.kneeId;
           this.$http.post('/station/bookStation',{
@@ -652,9 +677,13 @@
           })
             .then(function(response){
               console.log(response.data);
-              var bookDockData = response.data;
+              var bookDockData = response.data.no;
               if(response.data.code===200){
-                //this.bookBikeDockInfo.dockNumber = bookDockData
+                //this.bookBikeDockInfo.dockNumber = bookDockData;
+                //暂时写死
+                _this.bookBikeDockInfo.dockNumber = "1234";
+                _this.DetaStatus = false;
+                _this.bookingDockInfo = true;
               }
               else{}
             }).catch(function(error){
@@ -791,7 +820,7 @@
     }
   }
 
-  .book-cancel {
+  .booking-options {
     float: left;
     display: inline-flex;
     width: 100%;

@@ -33,7 +33,7 @@ export default {
         //'mobile_session_flag':true,
         //'session_token':Vue.prototype.GOBALUUID,
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
       }
     }).then(
       (response) => {
