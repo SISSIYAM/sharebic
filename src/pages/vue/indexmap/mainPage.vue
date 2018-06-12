@@ -51,7 +51,7 @@
                           @BikeKneeMethod="BikeKneeMethod" @clickMsg="clickMsg"></page-title-com>
           <!-- 地图 -->
           <!--<div id="map-container"></div>-->
-          <map_bike v-if="isShowBikeMap" change-to-navi="changeToNav" @changeToNav="changeToNav" class="map-container"
+          <map_bike v-if="isShowBikeMap" change-to-navi="changeToNav" @changeToNav="changeToNav" @unlockBikeDock="startOperateLock(...arguments)" class="map-container"
                     ref="bikemap"></map_bike>
           <map_car v-else change-to-navi="changeToNav" @changeToNav="changeToNav" class="map-container"
                    ref="carmap"></map_car>
@@ -303,8 +303,9 @@
       },
 
       //直接开锁（50:8C:B1:8C:12:B8）
-      startOperateLock() {
-        var temp = {"isSuccess": true, "status": 1, "qrcode": "ut123456", "result": "50:8C:B1:8C:12:B8"};
+      startOperateLock(val) {
+        //var temp = {"isSuccess": true, "status": 1, "qrcode": "ut123456", "result": "50:8C:B1:8C:12:B8"};
+        var temp = val;
         this.handleBleCode(temp)
 
       },

@@ -3,6 +3,30 @@
     <!-- 地图 -->
     <div id="bike_map-container" style="width: 100%;height: 93%;"></div>
 
+    <!-- 出行详情 -->
+    <div v-show="showGoOutInfo" id="GoOutInfo" style="right: 0px;left: 0px;">
+      <div style="width: 38px" class="GoOutimgLeft" @click="closeGoOut">
+        <img src="../../../../static/images/close_status.png" style="width: 38px;height: 38px;">
+      </div>
+      <div class="GoOutText" style="overflow: hidden">
+        <div class="myPostionText">
+          <h3>我的位置</h3>
+        </div>
+        <div class="winPostionText">
+          <el-autocomplete clearable class="inline-input" v-model="whitherPosition.PositionText"
+                           :fetch-suggestions="querySearch"
+                           placeholder="请输入您的目的地"></el-autocomplete>
+          <img src=""/>
+        </div>
+      </div>
+      <div style="width: 38px" class="GoOutimgRight" @click="searchWay">
+        <img src="../../../../static/images/position_search.png" style="width: 38px;height: 38px;">
+      </div>
+    </div>
+
+    <!-- 演示添加底部 临时-->
+    <!--<div class="bottom-box-container">-->
+
     <!-- 详情提示框 -->
     <div v-show="showDetaInfo" class="dataInfo" style="right: 0px;left: 0px;bottom: 110px;">
       <div class="detaItemLeft">
@@ -30,38 +54,20 @@
       </div>
     </div>
 
-    <!-- 出行详情 -->
-    <div v-show="showGoOutInfo" id="GoOutInfo" style="right: 0px;left: 0px;">
-      <div style="width: 38px" class="GoOutimgLeft" @click="closeGoOut">
-        <img src="../../../../static/images/close_status.png" style="width: 38px;height: 38px;">
-      </div>
-      <div class="GoOutText" style="overflow: hidden">
-        <div class="myPostionText">
-          <h3>我的位置</h3>
-        </div>
-        <div class="winPostionText">
-          <el-autocomplete clearable class="inline-input" v-model="whitherPosition.PositionText"
-                           :fetch-suggestions="querySearch"
-                           placeholder="请输入您的目的地"></el-autocomplete>
-          <img src=""/>
-        </div>
-      </div>
-      <div style="width: 38px" class="GoOutimgRight" @click="searchWay">
-        <img src="../../../../static/images/position_search.png" style="width: 38px;height: 38px;">
-      </div>
-    </div>
-
     <!-- 预约提示-->
-    <div v-show="showBookingDockInfo" class="dataInfo">
+    <div v-show="showBookingDockInfo" class="dataInfo1" style="right: 0px;left: 0px;">
       <div class="detaItemText">
-        <div class="detaItemText1">预约中{{}}</div>
-        <div class="detaItemText2">车位编号#{{}},请在约定时间内前往。</div>
+        <div class="detaItemText1">预约中 {{bookBikeDockInfo.countDownTimer}}</div>
+        <div class="detaItemText2">车位编号<span class="dock-number">#{{bookBikeDockInfo.dockNumber}}</span>,请在约定时间内前往。</div>
       </div>
       <div class="booking-options">
         <span class="detaItemText3" @click="">取消预约</span>
-        <span class="detaItemText" @click="">到达开锁</span>
+        <span class="detaItemText" @click="unlockBikeDock">到达开锁</span>
       </div>
     </div>
+
+    <!--</div>-->
+
   </div>
 </template>
 
@@ -81,8 +87,10 @@
       ElInput
     },
     name: 'map_bike',
-    props: {
-      changeToNavi: String,
+    //props: ['changeToNavi','passMacCode'],
+    props:{
+      changeToNavi:String,
+      passMacCode:''
     },
     data() {
       return {
@@ -138,7 +146,8 @@
 
         bookBikeDockInfo : {
           countDownTimer:'',
-          dockNumber:''
+          dockNumber:'',
+          dockMacCode:''
         },
 
         bookingDockInfo:false,
@@ -191,7 +200,7 @@
           return true;
         }
         else{
-          return true;
+          return false;
         }
       }
 
@@ -211,6 +220,9 @@
       //  给输入框添加id 实现 自动匹配
       document.getElementsByTagName('input')[0].setAttribute("id", 'keyWord_bike');
       document.getElementsByTagName('input')[0].addEventListener("input", this.getAutoAdText());
+
+      //倒计时
+      this.countDown();
     },
 
     methods: {
@@ -666,7 +678,7 @@
         }
       },
 
-      //停车预约和取消预约
+      //车桩预约
       bookBikeDock: function (){
         var _this = this;
         if(this.DetaInfo.FullAddress){
@@ -682,10 +694,14 @@
                 //this.bookBikeDockInfo.dockNumber = bookDockData;
                 //暂时写死
                 _this.bookBikeDockInfo.dockNumber = "1234";
+                _this.bookBikeDockInfo.dockMacCode = response.data.code;
+                
                 _this.DetaStatus = false;
                 _this.bookingDockInfo = true;
               }
-              else{}
+              else{
+                _this.VUETOOLS.totalShow("您附近没有停车桩可以预约", "", _this);
+              }
             }).catch(function(error){
               console.log(error);
           })
@@ -697,6 +713,27 @@
 
       pickUpBikeDock: function (){
 
+      },
+
+      //半小时倒数
+      countDown:function(){
+        var _this = this;
+        setInterval(function(){
+          setInterval(function () {
+            var mm = 30 - new Date().getMinutes() % 30;
+            var ss = 60 - new Date().getSeconds();
+            _this.bookBikeDockInfo.countDownTimer = mm+":"+ss;
+          }, 1000);
+        })
+
+      },
+
+      //到达开锁
+
+      unlockBikeDock: function(){
+        var _this = this;
+        var passMacCode = _this.bookingDockInfo.dockMacCode;
+        this.$emit('unlockBikeDock',passMacCode);
       },
 
       //开始调用原生导航
@@ -837,5 +874,57 @@
     margin-left: 30px;
     color:#333333;
   }
+
+  .dataInfo1 {
+    width: 90%;
+    height: auto;
+    position: absolute;
+    bottom: 105px;
+    background-color: white;
+    margin: 0 auto;
+    padding-bottom: 6px;
+    .detaItemLeft {
+      float: left;
+      display: inline-flex;
+      width: 100%;
+      border-bottom: 1px solid #ccc!important;
+      /*img {*/
+      /*margin-top: 10px;*/
+      /*margin-left: 12px;*/
+      /*margin-right: 12px;*/
+      /*}*/
+    }
+    .detaItemText {
+      font-family: "Ping SC Regular";
+      margin-top: 8px;
+      flex: 1;
+    }
+    .detaItemText1 {
+      font-weight: bolder;
+      margin-right: 215px;
+      margin-bottom: 10px;
+    }
+    .detaItemText2 {
+      font-size: smaller;
+      margin-right: 90px;
+      color: #666666;
+    }
+    .detaItemText3 {
+      margin-top: 8px;
+      flex: 1;
+      border-right: 1px solid #ccc!important;
+    }
+    .detaItemRight {
+      margin-top: 2px;
+      /*margin-right: 13px;*/
+      float: right;
+    }
+    .dock-number {
+      color:#5bc8ff;
+    }
+  }
+
+
+
 
 </style>
