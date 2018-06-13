@@ -49,16 +49,18 @@
       </div>
       <!-- 加入预约-->
       <div class="booking-options">
-        <span class="detaItemText3" @click="bookBikeDock">停车预约</span>
-        <span class="detaItemText" @click="pickUpBikeDock">取车预约</span>
+        <span class="detaItemText3" @click="bookOrPickupBikeDock(0)">停车预约</span>
+        <span class="detaItemText" @click="bookOrPickupBikeDock(1)">取车预约</span>
       </div>
     </div>
 
     <!-- 预约提示-->
     <div v-show="showBookingDockInfo" class="dataInfo1" style="right: 0px;left: 0px;">
+      <div class="detaItemLeft">
       <div class="detaItemText">
         <div class="detaItemText1">预约中 {{bookBikeDockInfo.countDownTimer}}</div>
         <div class="detaItemText2">车位编号<span class="dock-number">#{{bookBikeDockInfo.dockNumber}}</span>,请在约定时间内前往。</div>
+      </div>
       </div>
       <div class="booking-options">
         <span class="detaItemText3" @click="">取消预约</span>
@@ -147,7 +149,10 @@
         bookBikeDockInfo : {
           countDownTimer:'',
           dockNumber:'',
-          dockMacCode:''
+          dockMacCode:'',
+          code:'',
+          qrCode:'',
+          status:''
         },
 
         bookingDockInfo:false,
@@ -679,23 +684,25 @@
       },
 
       //车桩预约
-      bookBikeDock: function (){
+      bookOrPickupBikeDock: function (data){
         var _this = this;
         if(this.DetaInfo.FullAddress){
           this.bookOrPickBikeDock.stationId = this.DetaInfo.kneeId;
           this.$http.post('/station/bookStation',{
-            type:0,
+            type:data,
             stationId:this.bookOrPickBikeDock.stationId
           })
             .then(function(response){
               console.log(response.data);
-              var bookDockData = response.data.no;
-              if(response.data.code===200){
-                //this.bookBikeDockInfo.dockNumber = bookDockData;
+              var bookDockData = response.data;
+              if(bookDockData.code===200){
                 //暂时写死
                 _this.bookBikeDockInfo.dockNumber = "1234";
-                _this.bookBikeDockInfo.dockMacCode = response.data.code;
-                
+                //this.bookBikeDockInfo.dockNumber = bookDockData.data.no;
+                _this.bookBikeDockInfo.dockMacCode = bookDockData.data.code;
+                _this.bookBikeDockInfo.code = bookDockData.code;
+                _this.bookBikeDockInfo.qrCode = bookDockData.data.qrcode;
+                _this.bookBikeDockInfo.status = bookDockData.data.status;
                 _this.DetaStatus = false;
                 _this.bookingDockInfo = true;
               }
@@ -711,10 +718,6 @@
         }
       },
 
-      pickUpBikeDock: function (){
-
-      },
-
       //半小时倒数
       countDown:function(){
         var _this = this;
@@ -725,14 +728,12 @@
             _this.bookBikeDockInfo.countDownTimer = mm+":"+ss;
           }, 1000);
         })
-
       },
 
       //到达开锁
-
       unlockBikeDock: function(){
         var _this = this;
-        var passMacCode = _this.bookingDockInfo.dockMacCode;
+        var passMacCode = _this.bookBikeDockInfo;
         this.$emit('unlockBikeDock',passMacCode);
       },
 

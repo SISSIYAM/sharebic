@@ -266,24 +266,24 @@
         Blehome.setCanConnect(false);
       },
       //原生代码返回蓝牙mac地址
-      handleBleCode(code) {
-        console.log("handleBleCode" + JSON.stringify(code));
+      handleBleCode(val) {
+        console.log("handleBleCode" + JSON.stringify(val));
         let _this = this;
-        if (code.isSuccess) {
+        if (val.code===200) {
           BleManagerUtil.enableBluetooth().then(() => {
             // this.$refs.processDialog.changeVisible(true);
             this.dialogMessage = "正在开锁"
             Blehome.setCanConnect(true);
             Blehome.componentDidMount();
-            Blehome.setBleScanCodeAndStart(code.result);
+            Blehome.setBleScanCodeAndStart(val.dockMacCode);
             ShareBikeApi.showDialog("请稍候");
-            _this.lockStatus = code.status;
-            _this.lockCode = code.qrcode;
+            _this.lockStatus = val.status;
+            _this.lockCode = val.qrCode;
           }).catch((msg) => {
             _this.VUETOOLS.totalShow("请先打开蓝牙", "", _this);
           });
         } else {
-          _this.VUETOOLS.totalShow(code.result, "", _this);
+          _this.VUETOOLS.totalShow(val.dockMacCode, "", _this);
         }
 
       },
@@ -594,7 +594,7 @@
     top: 40%;
     background-color: #ffffff;
     width: 100%;
-    height:20em;
+    height:auto;
     display: flex;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
