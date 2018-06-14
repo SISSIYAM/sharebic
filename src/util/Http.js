@@ -3,7 +3,7 @@ import qs from 'qs'
 import Vue from 'vue'
 
 // 设置axios信息
-//axios.defaults.baseURL = 'http://bike.zhunilink.com:8889';
+axios.defaults.baseURL = 'http://bike.zhunilink.com:8889';
 axios.defaults.withCredentials=true;
 axios.interceptors.request.use(
   config => {

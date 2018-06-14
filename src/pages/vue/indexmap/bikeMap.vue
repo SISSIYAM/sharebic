@@ -63,7 +63,7 @@
       </div>
       </div>
       <div class="booking-options">
-        <span class="detaItemText3" @click="">取消预约</span>
+        <span class="detaItemText3" @click="cancelReservation">取消预约</span>
         <span class="detaItemText" @click="unlockBikeDock">到达开锁</span>
       </div>
     </div>
@@ -345,13 +345,14 @@
 
       //  调用插件的方法
       getPhoneGps: function (navigator, vue) {
+        var _this = this;
         ShareBikeApi.getLocation((data) => {
           console.log("第二种获取方法成功：" + JSON.stringify(data));
           this.userPosition.lng = data.lng;
           this.userPosition.lat = data.lat;
           this.userPosition.description = data.description;
           this.getOneStation(this.userPosition.lng, this.userPosition.lat, 1);
-          // _this.MarkerMaps.marker1 = _this.CreateMarker(_this.userPosition.lng,_this.userPosition.lat," http://utsmarthomeplatform.oss-cn-shenzhen.aliyuncs.com/commonFile_uploadFile/6eee0842906c4c97b2e94988b318f0af.png",map,"当前定位标识");
+          _this.MarkerMaps.marker1 = _this.CreateMarker(_this.userPosition.lng,_this.userPosition.lat," http://utsmarthomeplatform.oss-cn-shenzhen.aliyuncs.com/commonFile_uploadFile/6eee0842906c4c97b2e94988b318f0af.png",map,"当前定位标识");
           // console.log("定位点的marker绘制完成");
           this.getPositionStations();
         }, (data) => {
@@ -697,8 +698,8 @@
               var bookDockData = response.data;
               if(bookDockData.code===200){
                 //暂时写死
-                _this.bookBikeDockInfo.dockNumber = "1234";
-                //this.bookBikeDockInfo.dockNumber = bookDockData.data.no;
+                //_this.bookBikeDockInfo.dockNumber = "1234";
+                _this.bookBikeDockInfo.dockNumber = bookDockData.data.no;
                 _this.bookBikeDockInfo.dockMacCode = bookDockData.data.code;
                 _this.bookBikeDockInfo.code = bookDockData.code;
                 _this.bookBikeDockInfo.qrCode = bookDockData.data.qrcode;
@@ -735,6 +736,13 @@
         var _this = this;
         var passMacCode = _this.bookBikeDockInfo;
         this.$emit('unlockBikeDock',passMacCode);
+        this.showBookingDockInfo = false;
+      },
+
+      //取消预约,暂时无功能实现，关闭信息框
+      cancelReservation:function(){
+        var _this = this;
+        return _this.bookingDockInfo = false;
       },
 
       //开始调用原生导航

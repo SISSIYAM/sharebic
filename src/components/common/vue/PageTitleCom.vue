@@ -10,7 +10,7 @@
       </div>
       |
       <div class="mid_title" v-bind:class="{selected: isBike}" style="margin-left: 12px;" @click="midRightMothed">
-        汽车
+
       </div>
     </div>
     <div v-else></div>

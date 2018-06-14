@@ -366,15 +366,15 @@
 
       //获取蓝牙搜索到的车桩数据信息
       startBleScan: function () {
-        if(false){
-          this.bleDeviceList = [{"name":"#12345"},
-                                {"name":"#34467"},
-                                {"name":"#34567"},
-                                {"name":"#34667"},
-                                {"name":"#35567"}
-          ];
-          this.bikeDockListBox = true;
-        }else{
+        // if(false){
+        //   this.bleDeviceList = [{"name":"#12345"},
+        //                         {"name":"#34467"},
+        //                         {"name":"#34567"},
+        //                         {"name":"#34667"},
+        //                         {"name":"#35567"}
+        //   ];
+        //   this.bikeDockListBox = true;
+        // }else{
           this.bleDeviceList = [];
           this.bikeDockListBox = true;
           ShareBikeApi.showDialog("正在扫描");
@@ -385,8 +385,7 @@
             Blehome.setBleScanCodeAndStart("0");
           }).catch((msg) => {
           });
-        }
-
+        //}
       },
 
       handlePeripheralsCallback(peripheral) {
@@ -412,7 +411,7 @@
       connectBle(peripheral) {
         ShareBikeApi.showDialog("请稍候");
         Blehome.connectAfterScan(peripheral);
-        this.bleDeviceList = [];
+        this.bikeDockListBox = false;
       },
 
       closeBlueDeviceList: function(){
