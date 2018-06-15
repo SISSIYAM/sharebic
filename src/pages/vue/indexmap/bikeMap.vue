@@ -352,7 +352,7 @@
           this.userPosition.lat = data.lat;
           this.userPosition.description = data.description;
           this.getOneStation(this.userPosition.lng, this.userPosition.lat, 1);
-          _this.MarkerMaps.marker1 = _this.CreateMarker(_this.userPosition.lng,_this.userPosition.lat," http://utsmarthomeplatform.oss-cn-shenzhen.aliyuncs.com/commonFile_uploadFile/6eee0842906c4c97b2e94988b318f0af.png",map,"当前定位标识");
+          _this.MarkerMaps.marker1 = _this.CreateMarker(_this.userPosition.lng,_this.userPosition.lat,"http://utsmarthomeplatform.oss-cn-shenzhen.aliyuncs.com/commonFile_uploadFile/474c3f9d9a4a40dab44a2cb8da9b55de.png",map,"当前定位标识");
           // console.log("定位点的marker绘制完成");
           this.getPositionStations();
         }, (data) => {
@@ -393,7 +393,7 @@
         map.setFitView();
       },
 
-      CreateMarker: function (lng, lat, url, map, titleText) {
+      CreateMarker: function (lng, lat,url, map, titleText) {
         return new AMap.Marker({
           position: [lng, lat], //  标注点的位置
           map: map,
